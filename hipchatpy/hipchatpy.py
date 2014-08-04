@@ -46,10 +46,11 @@ class HipChatLogger:
 
         return response
 
-    def __send_notification(self, message, message_format='html', notify=False, color='yellow'):
+    def __send_notification(self, sender, message, message_format='html', notify=False, color='yellow'):
         """Send a message to a room.
 
         Args:
+            from: Required! The name of the sender.
             message: The message body. 10,000 characters max.
             message_format: Determines how the message is treated by our server and rendered inside HipChat applications.
             notify: Whether or not this message should trigger a notification for people in the room.
@@ -65,6 +66,7 @@ class HipChatLogger:
         """
 
         params = {
+            "from": sender,
             "message": message,
             "message_format": message_format,
             "notify": notify,
@@ -79,11 +81,11 @@ class HipChatLogger:
 
     def info(self, message, message_format='html'):
 
-        return self.__send_notification(message=message, message_format=message_format, notify=False, color='green')
+        return self.__send_notification(sender=sender, message=message, message_format=message_format, notify=False, color='green')
 
     def warn(self, message, message_format='html'):
 
-        return self.__send_notification(message=message, message_format=message_format, notify=True, color='yellow')
+        return self.__send_notification(sender=sender, message=message, message_format=message_format, notify=True, color='yellow')
 
     def error(self, message, message_format='html'):
 
@@ -100,6 +102,7 @@ def main():
 
     else:
         parser = ArgumentParser(description='hipchatpy command line tool')
+        parser.add_argument('-s', '--sender', required=True, help='Sender name')
         parser.add_argument('-r', '--room', required=True, help='Room ID')
         parser.add_argument('-m', '--message', type=str, required=True, help='Message')
         parser.add_argument('-l', '--level', type=int, default=1, choices=[1, 2, 3])
